@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ديمو: شارت ترند المتوسطات</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .chart-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>نموذج مبدئي: حساب ترند المتوسطات</h2>
+    <p>هذا الشارت يوضح البيانات الخام (بالأزرق) وخط ترند المتوسطات الحسابية (بالأحمر المتقطع)</p>
+    
+    <div class="chart-container">
+        <canvas id="trendChart"></canvas>
+    </div>
+
+    <script>
+        // 1. بيانات حسابية افتراضية للتجربة
+        const labels = ['اليوم 1', 'اليوم 2', 'اليوم 3', 'اليوم 4', 'اليوم 5', 'اليوم 6', 'اليوم 7', 'اليوم 8', 'اليوم 9', 'اليوم 10'];
+        const rawData = [15, 25, 20, 45, 40, 60, 55, 80, 75, 95];
+
+        // 2. دالة برمجية لحساب "المتوسط المتحرك" (Moving Average)
+        // هذا هو المنطق البرمجي الذي سيتم برمجته بلغة بايثون لاحقاً في الباك إند
+        function calculateMovingAverage(data, windowSize) {
+            let movingAverages = [];
+            for (let i = 0; i < data.length; i++) {
+                if (i < windowSize - 1) {
+                    movingAverages.push(null); // لا توجد بيانات كافية لحساب المتوسط في البداية
+                } else {
+                    let sum = 0;
+                    for (let j = 0; j < windowSize; j++) {
+                        sum += data[i - j];
+                    }
+                    movingAverages.push(sum / windowSize);
+                }
+            }
+            return movingAverages;
+        }
+
+        // حساب المتوسط لكل 3 نقاط
+        const trendData = calculateMovingAverage(rawData, 3);
+
+        // 3. رسم الشارت
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'البيانات الأصلية',
+                        data: rawData,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'ترند المتوسطات',
+                        data: trendData,
+                        borderColor: '#dc3545',
+                        borderWidth: 3,
+                        borderDash: [5, 5], // جعل الخط متقطع لتمييزه كترند
+                        fill: false,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
