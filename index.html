@@ -2,63 +2,66 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - ترند المتوسطات</title>
+    <title>نظام تحليل البيانات المتقدم</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; padding: 20px; }
-        .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .chart-container { height: 400px; }
+        body { background: #0f172a; color: #f8fafc; padding: 20px; font-family: sans-serif; }
+        .dashboard { background: #1e293b; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .loading-overlay { display: none; color: #38bdf8; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card p-4">
-        <h4 class="mb-4">تحليل ترند البيانات (مُحاكي)</h4>
-        <div class="btn-group mb-3">
-            <button class="btn btn-outline-primary" onclick="updateChart(3)">متوسط 3 أيام</button>
-            <button class="btn btn-outline-primary" onclick="updateChart(5)">متوسط 5 أيام</button>
+    <div class="dashboard">
+        <h4 class="mb-3">لوحة تحكم Django - تحليل الاتجاهات</h4>
+        <div class="mb-3">
+            <select id="windowSize" class="form-select bg-dark text-white w-25" onchange="processData()">
+                <option value="3">متوسط 3 أيام</option>
+                <option value="5">متوسط 5 أيام</option>
+                <option value="7">متوسط 7 أيام</option>
+            </select>
         </div>
-        <div class="chart-container">
-            <canvas id="trendChart"></canvas>
-        </div>
+        <div id="loader" class="loading-overlay">جاري معالجة البيانات من السيرفر...</div>
+        <canvas id="mainChart" style="height:350px;"></canvas>
     </div>
 </div>
 
 <script>
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    const rawData = [15, 25, 20, 45, 40, 60, 55, 80, 75, 95];
-    let trendChart;
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    const rawData = [15, 25, 20, 45, 40, 60, 55, 80, 75, 95, 105, 120];
+    let chart;
 
-    function calculateMA(data, windowSize) {
-        return data.map((_, i) => {
-            if (i < windowSize - 1) return null;
-            let sum = 0;
-            for (let j = 0; j < windowSize; j++) sum += data[i - j];
-            return (sum / windowSize).toFixed(1);
-        });
+    function processData() {
+        document.getElementById('loader').style.display = 'block';
+        setTimeout(() => { // محاكاة لزمن استجابة قاعدة البيانات
+            document.getElementById('loader').style.display = 'none';
+            renderChart(parseInt(document.getElementById('windowSize').value));
+        }, 500);
     }
 
-    function createChart(windowSize) {
-        if (trendChart) trendChart.destroy();
-        trendChart = new Chart(ctx, {
+    function renderChart(win) {
+        if (chart) chart.destroy();
+        const ma = rawData.map((_, i, arr) => {
+            if (i < win - 1) return null;
+            let sum = arr.slice(i - win + 1, i + 1).reduce((a, b) => a + b, 0);
+            return (sum / win).toFixed(1);
+        });
+
+        chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Array.from({length: 10}, (_, i) => `اليوم ${i+1}`),
+                labels: rawData.map((_, i) => `يوم ${i+1}`),
                 datasets: [
-                    { label: 'البيانات الخام', data: rawData, borderColor: '#0d6efd', tension: 0.3 },
-                    { label: `متوسط ${windowSize} أيام`, data: calculateMA(rawData, windowSize), borderColor: '#dc3545', borderDash: [5, 5] }
+                    { label: 'البيانات الحقيقية', data: rawData, borderColor: '#38bdf8', tension: 0.4 },
+                    { label: 'خط الترند (محسوب)', data: ma, borderColor: '#f43f5e', borderDash: [6, 6], borderWidth: 3 }
                 ]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
     }
-
-    function updateChart(size) { createChart(size); }
-    createChart(3); // التشغيل الافتراضي
+    processData();
 </script>
-
 </body>
 </html>
