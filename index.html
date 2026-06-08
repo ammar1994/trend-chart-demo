@@ -39,12 +39,14 @@
             font-size: 22px;
             margin-bottom: 8px;
             color: #38bdf8;
+            font-weight: 700;
         }
 
         p.subtitle {
             font-size: 14px;
             color: #94a3b8;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
 
         .form-group {
@@ -57,6 +59,7 @@
             font-size: 14px;
             margin-bottom: 8px;
             color: #cbd5e1;
+            font-weight: 600;
         }
 
         input {
@@ -93,9 +96,9 @@
             background: #0ea5e9;
         }
 
-        /* قسم عرض النتائج */
+        /* قسم عرض النتائج المستقر */
         .result-box {
-            display: none; /* مخفي في البداية */
+            display: none;
             margin-top: 25px;
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -104,7 +107,7 @@
 
         .data-row {
             background: #0f172a;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             margin-bottom: 12px;
             display: flex;
@@ -113,27 +116,40 @@
             border: 1px solid #334155;
         }
 
+        .text-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-align: right;
+        }
+
         .data-label {
             font-size: 14px;
             color: #94a3b8;
+            white-space: nowrap;
         }
 
+        /* حماية حتمية لمنع انقلاب الكلمات والرموز الإنجليزية */
         .data-value {
             font-size: 16px;
             font-weight: 600;
             color: #fff;
             user-select: all;
+            direction: ltr;
+            display: inline-block;
         }
 
         .btn-copy {
             background: #334155;
             color: #38bdf8;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .btn-copy:hover {
@@ -157,6 +173,8 @@
             font-size: 14px;
             margin-top: 10px;
             display: none;
+            font-weight: 600;
+            text-align: right;
         }
 
         @keyframes fadeIn {
@@ -181,7 +199,7 @@
 
     <div id="resultBox" class="result-box">
         <div class="data-row">
-            <div>
+            <div class="text-container">
                 <span class="data-label">اسم المستخدم:</span>
                 <span id="usernameVal" class="data-value">Ammar_Gamer</span>
             </div>
@@ -189,7 +207,7 @@
         </div>
 
         <div class="data-row">
-            <div>
+            <div class="text-container">
                 <span class="data-label">كلمة المرور:</span>
                 <span id="passwordVal" class="data-value">Pass@2026</span>
             </div>
@@ -199,9 +217,9 @@
         <button class="btn-primary btn-otp" onclick="getOTP()">سحب كود التحقق OTP</button>
         
         <div id="otpRow" class="data-row" style="margin-top: 12px; display: none;">
-            <div>
+            <div class="text-container">
                 <span class="data-label">كود الـ OTP الحالي:</span>
-                <span id="otpVal" class="data-value" style="color: #10b981;">589 241</span>
+                <span id="otpVal" class="data-value" style="color: #10b981;">589241</span>
             </div>
             <button class="btn-copy" onclick="copyText('otpVal', this)">نسخ</button>
         </div>
@@ -209,7 +227,6 @@
 </div>
 
 <script>
-    // نظام أمان وهمي: لحساب الـ Limit اليومي من المتصفح مباشرة لتبهر العميل
     let attemptCount = 0;
     const MAX_ATTEMPTS = 5;
 
@@ -218,7 +235,6 @@
         const resultBox = document.getElementById('resultBox');
         const errorMsg = document.getElementById('errorMsg');
 
-        // فحص الـ Limit أولاً لمنع التخمين
         if (attemptCount >= MAX_ATTEMPTS) {
             errorMsg.innerText = "لقد تجاوزت الحد الأقصى من المحاولات المسموحة لهذا اليوم لحماية الحساب!";
             errorMsg.style.display = "block";
@@ -226,22 +242,19 @@
             return;
         }
 
-        attemptCount++;
-
-        // محاكاة التحقق: إذا كتب الرقم 12345 ينجح، أي رقم آخر يعتبر خطأ للتجربة
         if (orderInput === "12345") {
             errorMsg.style.display = "none";
             resultBox.style.display = "block";
-            // إخفاء الـ OTP إذا كان مفتوحاً من تجربة سابقة
             document.getElementById('otpRow').style.display = "none"; 
+            attemptCount = 0; // تصفير المحاولات عند النجاح لراحة المستخدم
         } else {
+            attemptCount++;
             resultBox.style.display = "none";
             errorMsg.innerText = `رقم الطلب غير صحيح! (المحاولات المتبقية اليوم: ${MAX_ATTEMPTS - attemptCount})`;
             errorMsg.style.display = "block";
         }
     }
 
-    // دالة النسخ التلقائي بضغطة زر
     function copyText(elementId, btn) {
         const textToCopy = document.getElementById(elementId).innerText;
         navigator.clipboard.writeText(textToCopy).then(() => {
@@ -258,10 +271,8 @@
         });
     }
 
-    // دالة محاكاة سحب كود الـ OTP
     function getOTP() {
         const otpRow = document.getElementById('otpRow');
-        // توليد رقم عشوائي لمحاكاة الـ OTP الحقيقي لإبهار الزبون
         const randomOTP = Math.floor(100000 + Math.random() * 900000);
         document.getElementById('otpVal').innerText = randomOTP;
         
