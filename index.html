@@ -104,7 +104,7 @@
             animation: fadeIn 0.5s ease;
         }
 
-        /* تعديل جوهري لتوزيع محتويات الخانة بالتساوي */
+        /* تعديل التوزيع: اليمين للنصوص واليسار للأزرار */
         .data-row {
             background: #0f172a;
             padding: 14px;
@@ -114,14 +114,13 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid #334155;
-            text-align: right;
         }
 
         .data-content {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-grow: 1;
+            gap: 10px;
+            text-align: right;
         }
 
         .data-label {
@@ -147,11 +146,11 @@
             font-size: 13px;
             font-weight: bold;
             transition: all 0.2s;
-            margin-left: 10px;
         }
 
         .btn-copy:hover {
             background: #06b6d4;
+            color: #fff;
         }
 
         .btn-otp {
@@ -163,6 +162,7 @@
 
         .btn-otp:hover {
             background: #0ea5e9;
+            color: #fff;
         }
 
         .error-msg {
@@ -195,29 +195,29 @@
 
     <div id="resultBox" class="result-box">
         <div class="data-row">
-            <button class="btn-copy" onclick="copyText('usernameVal', this)">نسخ</button>
             <div class="data-content">
                 <span class="data-label">اسم المستخدم:</span>
-                <span id="usernameVal" class="data-value">Ammar_Gamer</span>
+                <span id="usernameVal" class="data-value" dir="ltr">Ammar_Gamer</span>
             </div>
+            <button class="btn-copy" onclick="copyText('usernameVal', this)">نسخ</button>
         </div>
 
         <div class="data-row">
-            <button class="btn-copy" onclick="copyText('passwordVal', this)">نسخ</button>
             <div class="data-content">
                 <span class="data-label">كلمة المرور:</span>
-                <span id="passwordVal" class="data-value">Pass@2026</span>
+                <span id="passwordVal" class="data-value" dir="ltr">Pass@2026</span>
             </div>
+            <button class="btn-copy" onclick="copyText('passwordVal', this)">نسخ</button>
         </div>
 
         <button class="btn-primary btn-otp" onclick="getOTP()">سحب كود التحقق OTP</button>
         
         <div id="otpRow" class="data-row" style="margin-top: 14px; display: none;">
-            <button class="btn-copy" onclick="copyText('otpVal', this)">نسخ</button>
             <div class="data-content">
                 <span class="data-label">كود الـ OTP الحالي:</span>
-                <span id="otpVal" class="data-value" style="color: #38bdf8;">617312</span>
+                <span id="otpVal" class="data-value" dir="ltr" style="color: #38bdf8;">617312</span>
             </div>
+            <button class="btn-copy" onclick="copyText('otpVal', this)">نسخ</button>
         </div>
     </div>
 </div>
@@ -242,7 +242,7 @@
             errorMsg.style.display = "none";
             resultBox.style.display = "block";
             document.getElementById('otpRow').style.display = "none"; 
-            attemptCount = 0; // تصفير العداد عند النجاح
+            attemptCount = 0; 
         } else {
             attemptCount++;
             resultBox.style.display = "none";
