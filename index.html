@@ -96,7 +96,7 @@
             background: #0ea5e9;
         }
 
-        /* قسم عرض النتائج المستقر */
+        /* نظام عرض النتائج الاحترافي والمستقر */
         .result-box {
             display: none;
             margin-top: 25px;
@@ -119,7 +119,7 @@
         .text-container {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             text-align: right;
         }
 
@@ -129,7 +129,7 @@
             white-space: nowrap;
         }
 
-        /* حماية حتمية لمنع انقلاب الكلمات والرموز الإنجليزية */
+        /* عزل كامل للنصوص الإنجليزية لمنع تداخل الرموز والأرقام */
         .data-value {
             font-size: 16px;
             font-weight: 600;
@@ -246,7 +246,7 @@
             errorMsg.style.display = "none";
             resultBox.style.display = "block";
             document.getElementById('otpRow').style.display = "none"; 
-            attemptCount = 0; // تصفير المحاولات عند النجاح لراحة المستخدم
+            attemptCount = 0; 
         } else {
             attemptCount++;
             resultBox.style.display = "none";
